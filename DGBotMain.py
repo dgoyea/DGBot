@@ -1,6 +1,7 @@
 import time
 import sys, getopt
 import datetime
+import DGDBWriter
 from DGPoloniexWrapper import dgpoloniex
 
 def createTimeStamp(datestr, format="%Y-%m-%d %H:%M:%S"):
@@ -25,7 +26,6 @@ def main(argv):
         sys.exit(2)
 
     while True:
-        print('Its True')
         currentValues = conn.api_query("returnTicker")
 
         lastPairPrice = float(currentValues[pair]["last"])
