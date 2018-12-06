@@ -11,6 +11,7 @@ def createTimeStamp(datestr, format="%Y-%m-%d %H:%M:%S"):
 class dgpoloniex:
 
     def __init__(self, APIKey, Secret):
+        print('initializing dgpoloniex')
         self.APIKey = APIKey
         self.Secret = Secret
 
@@ -30,6 +31,7 @@ class dgpoloniex:
     def api_query(self, command, req={}):
 
         if(command == "returnTicker" or command == "return24Volume"):
+            print('received command ' + command)
             ret = urllib.request.urlopen('https://poloniex.com/public?command=' + command)
             return json.loads(ret.read())
         elif(command == "returnOrderBook"):
@@ -39,6 +41,8 @@ class dgpoloniex:
             ret = urllib.reqiest.urlopen(Request('https://poloniex.com/public?command=' + "returnTradeHistory" + '&currencyPair=' + str(req['currencyPair'])))
             return json.loads(ret.read())
         else:
+            # This section used for trading commands where a the API needs to be accessed via the secure api
+            print('do we ever get here?')
             req['command'] = command
             req['nonce'] = int(time.time()*1000)
             post_data = urllib.urlencode(req)

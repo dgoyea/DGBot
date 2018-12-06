@@ -13,10 +13,10 @@ def main(argv):
     period = 5
 
     # Keys generated from poloniex for API connection
-    APIKey1 = '7H4S92B3-ARCJIWL9-UWL47SQ9-4MEU37L1'
-    Secret = '4d6fb56c5039a854f0db718a7b308b465347e67f93d56c2ac2c070313ca40a6ad103a8aafecf85e13a7b561cf41e4204902a08f3b0931e1498a87418128060d3'
+    APIKey1 = ''
+    Secret = ''
 
-    print('Connecting to Poloniex')
+    print('Creating dgpoloniex object')
     conn = dgpoloniex(APIKey1, Secret)
 
     try:
