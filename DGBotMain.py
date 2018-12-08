@@ -1,6 +1,7 @@
 import time
 import sys, getopt
 import datetime
+import configparser
 import DGDBWriter
 from DGPoloniexWrapper import dgpoloniex
 
@@ -9,6 +10,12 @@ def createTimeStamp(datestr, format="%Y-%m-%d %H:%M:%S"):
 
 def main(argv):
 
+    # Get configuration from ini file
+    config = configparser.ConfigParser()
+    config.sections()
+    
+    config.read('../DGBotConfig.ini')
+    
     pair = 'BTC_EOS'
     period = 5
 
