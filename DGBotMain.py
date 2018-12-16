@@ -1,39 +1,53 @@
-import time
+import os
 import sys, getopt
+import time
 import datetime
 import configparser
 import DGDBWriter
 from DGPoloniexWrapper import dgpoloniex
 
-def createTimeStamp(datestr, format="%Y-%m-%d %H:%M:%S"):
-    return time.mktime(time.strptime(datestr, format))
+def ts():
+    return str(datetime.datetime.now())
 
 def main(argv):
 
-    # Get configuration from ini file
-    config = configparser.ConfigParser()
-    config.sections()
-    
-    config.read('../DGBotConfig.ini')
-    
-    pair = 'BTC_EOS'
-    period = 5
-
-    # Keys generated from poloniex for API connection
-    APIKey1 = ''
-    Secret = ''
-
-    print('Creating dgpoloniex object')
-    conn = dgpoloniex(APIKey1, Secret)
-
+    # If command line arguments are given use this section.
     try:
         opts, args = getopt.getopt(argv,"hp:",["period=",])
     except getopt.GetoptError:
-        print ('DGBotMain.py -p <period>')
+        print (ts() + ': DGBotMain.py -p <period>')
         sys.exit(2)
+    
+    # Get configuration from ini file.
+    
+    cfgfile = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..\DGBotConfig\DGBotConfig.ini')
+    config = configparser.ConfigParser()
+    
+    if os.path.isfile(cfgfile):
+        print(ts() + ': Using ini file: ' + cfgfile)
+    else:
+        print(ts() + ': No ini file found.')
+        quit()
+                
+    try:
+        print(ts() + ': Reading config file.')
+        config.read(cfgfile)
+        
+    except:
+        print(ts() + ': Could not read config file.')
+    
+    period = 5
+
+    # Get keys from config file. Keys are generated from poloniex for API connection.
+    pair = config['Poloniex']['Pair']
+    APIKey1 = config['Poloniex']['APIKey']
+    Secret = config['Poloniex']['Secret']
+       
+    # Create instance of dgpoloniex.
+    conn = dgpoloniex(APIKey1, Secret);
 
     while True:
-        currentValues = conn.api_query("returnTicker")
+        currentValues = conn.api_query("returnTicker", pair)
 
         lastPairPrice = float(currentValues[pair]["last"])
 
