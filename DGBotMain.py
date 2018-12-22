@@ -3,7 +3,7 @@ import sys, getopt
 import time
 import datetime
 import configparser
-import DGDBWriter
+from DGDBWriter import dgdbwriter
 from DGPoloniexWrapper import dgpoloniex
 
 def ts():
@@ -19,7 +19,6 @@ def main(argv):
         sys.exit(2)
     
     # Get configuration from ini file.
-    
     cfgfile = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..\DGBotConfig\DGBotConfig.ini')
     config = configparser.ConfigParser()
     
@@ -36,15 +35,18 @@ def main(argv):
     except:
         print(ts() + ': Could not read config file.')
     
-    period = 5
+    
+    # Create instance of dgdbwriter
+    dbwrite = dgdbwriter()
 
     # Get keys from config file. Keys are generated from poloniex for API connection.
-    pair = config['Poloniex']['Pair']
     APIKey1 = config['Poloniex']['APIKey']
     Secret = config['Poloniex']['Secret']
+    pair = config['Tick']['Pair']
+    period = config['Tick']['period']
        
     # Create instance of dgpoloniex.
-    conn = dgpoloniex(APIKey1, Secret);
+    conn = dgpoloniex(APIKey1, Secret)
 
     while True:
         currentValues = conn.api_query("returnTicker", pair)
@@ -53,7 +55,10 @@ def main(argv):
 
         print ('{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now()) + ' Period: %ss %s: %.12f' % (period,pair,lastPairPrice))
         time.sleep(int(period))
+        
+        dbwrite.store_tick(pair, lastPairPrice)
 
+    dbwrite.close_conn()
 
 if __name__ == "__main__":
-	main(sys.argv[1:])
+    main(sys.argv[1:])

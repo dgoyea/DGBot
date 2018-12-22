@@ -1,16 +1,42 @@
 from pandas.io import sql
 import mysql.connector
 
+class dgdbwriter:
+     
+    def __init__(self):
+        self.mysql_con = mysql.connector.connect(host='127.0.0.1', port='3306', user='dgmysqlbatch', db='dgbot')
+        self.dbcursor = self.mysql_con.cursor()
+        self.dog = 'cat'
+    
+    def store_tick(self, pair, price):
+        
+        # Assemble the table name to store the tick into based on pair passed in
+        dgTableName = 'dgbot.pol_' + pair + '_tick'
+        dgTableName = dgTableName.lower()
+        
+        # SQL used to insert into table with placeholders for values.
+        add_tick = ("INSERT INTO %(dgTableName)s "
+                      "(price) "
+                      "VALUES (%(price)s)")
+        
+        # dict to add values into SQL
+        data_tick = {
+            'dgTableName' : dgTableName,
+            'price' : price}
+        
+        sqltest = add_tick % data_tick
+        
+        print(sqltest)
+        
+        self.dbcursor.execute(add_tick, data_tick)
+        self.dbcursor.commit()
+                
+                
+        return
+        
+    def close_conn(self):
+        self.mysql_con.close()
 
-
-
-# class dgdbwrite:
-#     
-#     mysql_con = mysql.connector.connect(host='127.0.0.1', port='3306', user='dgmysqlbatch', db='dgbot')
-#     mysql_con.close()
-#     
-#     def __init__:
-#         self.
 #  
 # 
 # 
