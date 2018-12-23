@@ -7,10 +7,12 @@ from DGDBWriter import dgdbwriter
 from DGPoloniexWrapper import dgpoloniex
 
 def ts():
-    return str(datetime.datetime.now())
+    d = datetime.datetime.now()
+    return datetime.datetime.strftime(d, "%Y-%m-%d %H:%M:%S")
+
 
 def main(argv):
-
+    
     # If command line arguments are given use this section.
     try:
         opts, args = getopt.getopt(argv,"hp:",["period=",])
@@ -53,10 +55,11 @@ def main(argv):
 
         lastPairPrice = float(currentValues[pair]["last"])
 
-        print ('{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now()) + ' Period: %ss %s: %.12f' % (period,pair,lastPairPrice))
+        dtstamp = ts()
+        print (dtstamp + ': Period: %ss %s: %.12f' % (period,pair,lastPairPrice))
         time.sleep(int(period))
         
-        dbwrite.store_tick(pair, lastPairPrice)
+        dbwrite.store_tick(dtstamp, pair, lastPairPrice)
 
     dbwrite.close_conn()
 
