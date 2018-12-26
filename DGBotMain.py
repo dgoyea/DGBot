@@ -3,6 +3,7 @@ import sys, getopt
 import time
 import datetime
 import configparser
+import DGPoloniexWebsocket
 from DGDBWriter import dgdbwriter
 from DGPoloniexWrapper import dgpoloniex
 
@@ -49,6 +50,7 @@ def main(argv):
        
     # Create instance of dgpoloniex.
     conn = dgpoloniex(APIKey1, Secret)
+    
 
     while True:
         currentValues = conn.api_query("returnTicker", pair)
